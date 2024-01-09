@@ -25,9 +25,7 @@ public class AdvesaryCondition {
 		this.player = player;
 		this.board = board;
 
-		for (Condition c : conditions) {
-			c.calcCondition();
-		}
+		conditions.parallelStream().forEach(c -> c.calcCondition());
 	}
 
 	class Row1 implements Condition {

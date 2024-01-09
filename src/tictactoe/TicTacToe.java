@@ -93,6 +93,7 @@ public class TicTacToe {
 					}
 					if (--verticalO[j] == 0) {
 						System.out.println("O Wins");
+						return true;
 					}
 					if ((i == 0 && j == 0) || (i == 1 && j == 1) || (i == 2 && j == 2)) {
 						if (--diagonalORight == 0) {

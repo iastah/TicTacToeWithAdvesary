@@ -3,6 +3,7 @@ package tictactoe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import tictactoe.TicTacToe.Player;
 
@@ -87,18 +88,20 @@ public class Advesary {
 
 		List<AdvesaryState> states = createStates(board);
 
-		for (AdvesaryState state : states) {
-			int count = 0;
-			AdvesaryCondition condition = new AdvesaryCondition(player, state.getBoard());
-			for (Condition c : condition.getConditions()) {
-				if (c.getValue() == -3) {
-					count++;
-				}
-			}
-			stateRank.get(count).add(state);
-		}
+		states.parallelStream().forEach(s -> stateRankOptimization(s, stateRank));
 
 		return stateRank;
+	}
+
+	private void stateRankOptimization(AdvesaryState state, List<List<AdvesaryState>> stateRank) {
+		AtomicInteger count = new AtomicInteger(0);
+		AdvesaryCondition condition = new AdvesaryCondition(player, state.getBoard());
+		condition.getConditions().parallelStream().forEach(c -> {
+			if (c.getValue() == -3) {
+				count.incrementAndGet();
+			}
+		});
+		stateRank.get(count.get()).add(state);
 	}
 
 	private boolean isCenterTaken(char[][] board) {
